@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulado Interativo de Inglês - Compreensão Leitora</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #002147;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Scrollbar Estilizada */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dc2626;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b91c1c;
+    }
+
+    /* Header e Navegação */
+    header {
+      width: 100%;
+      max-width: 850px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 15px;
+      display: block;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      background-color: #001026;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+
+    .nav-grid {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      border: 2px solid #ffffff;
+      background-color: #001530;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #003366;
+    }
+
+    .nav-btn.active {
+      border-color: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .nav-btn.correct {
+      background-color: #16a34a !important;
+      border-color: #16a34a !important;
+      color: #fff;
+    }
+
+    .nav-btn.incorrect {
+      background-color: #dc2626 !important;
+      border-color: #dc2626 !important;
+      color: #fff;
+    }
+
+    /* Container Principal */
+    .container {
+      background-color: #ffffff;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 850px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .question-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #000;
+    }
+
+    /* Pinned Text (Texto Fixo com Scroll) */
+    .pinned-text-box {
+      max-height: 240px;
+      overflow-y: auto;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #dc2626;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #000;
+    }
+
+    .pinned-text-box h4 {
+      margin-bottom: 8px;
+      color: #dc2626;
+    }
+
+    /* Content Media (Imagens/Cartuns) */
+    .media-box {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .media-box img {
+      max-width: 100%;
+      max-height: 340px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Enunciado */
+    .statement {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #000;
+      font-weight: 500;
+    }
+
+    /* Opções de Resposta */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      background-color: #fff;
+    }
+
+    .option-item:hover {
+      background-color: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .option-item input[type="radio"] {
+      margin-top: 4px;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+
+    .option-text {
+      font-size: 1rem;
+      color: #000;
+      line-height: 1.4;
+    }
+
+    .option-item.selected {
+      border-color: #dc2626;
+      background-color: #fef2f2;
+    }
+
+    .option-item.correct-bg {
+      background-color: #dcfce7 !important;
+      border-color: #16a34a !important;
+    }
+
+    .option-item.incorrect-bg {
+      background-color: #fee2e2 !important;
+      border-color: #dc2626 !important;
+    }
+
+    /* Justificativa / Feedback */
+    .feedback-box {
+      display: none;
+      background-color: #f8fafc;
+      border-left: 4px solid #0284c7;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #000;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      color: #0284c7;
+    }
+
+    /* Botões de Ação na Ordem: [ Next ] [ Check ] [ Previous ] */
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      flex: 1;
+      max-width: 150px;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: #b91c1c;
+    }
+
+    .btn:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .btn-finish {
+      background-color: #16a34a;
+      max-width: 200px;
+    }
+
+    .btn-finish:hover {
+      background-color: #15803d;
+    }
+
+    /* Modal de Resultado Final */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px;
+      color: #000;
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .modal-header h2 {
+      color: #dc2626;
+      font-size: 1.8rem;
+    }
+
+    .score-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background-color: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .stat-value.correct { color: #16a34a; }
+    .stat-value.incorrect { color: #dc2626; }
+
+    .diagnostics-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .diagnostics-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      .action-buttons {
+        flex-direction: row;
+      }
+      .btn {
+        padding: 10px 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="master.png" alt="Logo Master" class="logo">
+    <h1>Simulado de Língua Inglesa - 8º Ano</h1>
+    <div class="nav-grid" id="nav-grid">
+      <!-- Botões de 1 a 10 gerados via JS -->
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="question-header">
+      <span class="question-title" id="question-title">Questão 1 de 10</span>
+    </div>
+
+    <!-- Pinned Text (Exibido nas Questões 1, 2 e 3) -->
+    <div class="pinned-text-box" id="pinned-text-box" style="display: none;">
+      <h4>Texto Base:</h4>
+      <p id="pinned-text-content"></p>
+    </div>
+
+    <!-- Container de Imagem para Cartuns/Tirinhas (Q10) -->
+    <div class="media-box" id="media-box" style="display: none;">
+      <img id="media-image" src="" alt="Imagem da questão">
+    </div>
+
+    <!-- Enunciado -->
+    <div class="statement" id="statement-text">
+      <!-- Enunciado será carregado aqui -->
+    </div>
+
+    <!-- Opções -->
+    <div class="options-list" id="options-list">
+      <!-- Opções serão carregadas aqui -->
+    </div>
+
+    <!-- Justificativa -->
+    <div class="feedback-box" id="feedback-box">
+      <strong>Justificativa:</strong> <span id="feedback-text"></span>
+    </div>
+
+    <!-- Botões de Ação: [ Next ] [ Check ] [ Previous ] -->
+    <div class="action-buttons">
+      <button class="btn" id="btn-next" onclick="nextQuestion()">Next</button>
+      <button class="btn" id="btn-check" onclick="checkAnswer()">Check</button>
+      <button class="btn" id="btn-prev" onclick="prevQuestion()">Previous</button>
+    </div>
+  </main>
+
+  <!-- Modal de Resultado Final -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Resultado do Simulado</h2>
+      </div>
+      <div class="score-display" id="score-display">
+        Sua Nota: 0,0 / 10,0
+      </div>
+      <div class="stats-container">
+        <div class="stat-item">
+          <div>Acertos</div>
+          <div class="stat-value correct" id="stat-correct">0 (0%)</div>
+        </div>
+        <div class="stat-item">
+          <div>Erros</div>
+          <div class="stat-value incorrect" id="stat-incorrect">0 (0%)</div>
+        </div>
+      </div>
+      <div class="diagnostics-title">Diagnóstico e Recomendações Pedagógicas:</div>
+      <ul class="diagnostics-list" id="diagnostics-list">
+        <!-- Recomendações dinâmicas -->
+      </ul>
+      <div class="modal-footer">
+        <button class="btn btn-finish" onclick="restartQuiz()">Refazer Simulado</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // TEXTO BASE PARA AS QUESTÕES 1, 2 E 3 (Texto Denso sobre Poluição por Esgoto)
+    const textBase123 = `"The Silent Contamination: Sewage Hazards in Aquatic Ecosystems"\n\n` +
+      `The rapid expansion of urban centers without adequate urban planning has turned illegal sewage discharges into one of the most critical environmental threats to modern aquatic ecosystems. Rivers running near densely populated areas frequently receive millions of liters of untreated residential and industrial wastewater daily. This massive influx of organic waste triggers severe ecological imbalance, primary among which is rapid oxygen depletion. As bacteria decompose the abundant organic matter, they consume dissolved oxygen at alarming rates, leading to extensive aquatic dead zones where fish, native plants, and micro-organisms cannot survive.\n\n` +
+      `Beyond immediate surface water degradation, untreated wastewater presents an even more insidious long-term danger: subterranean contamination. Hazardous chemical pollutants, synthetic detergents, heavy metals, and pathogenic bacteria present in raw sewage gradually seep through porous soil layers, eventually infiltrating underground aquifers. These water tables serve as vital reservoirs that supply drinking water to millions of urban and rural residents. Once an aquifer is polluted, remediation is extraordinarily complex, prohibitively expensive, and often practically impossible, exposing populations to dangerous chronic health issues through contaminated tap water and agricultural irrigation.\n\n` +
+      `Addressing this environmental crisis demands structural infrastructure interventions and stringent legal regulations against unauthorized waste discharge. Municipalities must invest heavily in modern wastewater treatment plants capable of neutralizing toxic compounds before water reaches natural basins. Concurrently, public health campaigns are required to educate communities about proper waste disposal practices. Protecting our rivers and hidden underground water reserves is not merely an ecological obligation, but an urgent public health imperative to secure safe biological resources for future generations.`;
+
+    // ESTRUTURA DOS DADOS DAS QUESTÕES
+    const rawQuestions = [
+      {
+        id: 1,
+        topic: "Interpretação Textual Avançada (Texto Denso - Causa e Efeito)",
+        pinnedText: textBase123,
+        image: null,
+        statement: "Com base nos mecanismos de decomposição descritos no primeiro parágrafo do texto, qual é a consequência biológica direta da alta concentração de dejetos orgânicos lançados nos rios?",
+        correctKey: "C",
+        options: {
+          A: "A flora aquática se multiplica de forma descontrolada graças ao excesso de nutrientes sintéticos.",
+          B: "As temperaturas da água caem drasticamente, o que paralisa o processo de decomposição bacteriana.",
+          C: "A decomposição da matéria orgânica pelas bactérias consome rapidamente o oxigênio dissolvido, gerando zonas mortas.",
+          D: "Os compostos químicos industriais neutralizam as bactérias nocivas quase instantaneamente.",
+          E: "Os metais pesados evaporam diretamente do leito do rio em direção às camadas superiores da atmosfera."
+        },
+        justification: "Resposta correta: C. O primeiro parágrafo estabelece diretamente que a decomposição bacteriana da matéria orgânica consome o oxigênio dissolvido em ritmo alarmante ('consume dissolved oxygen at alarming rates'), culminando no surgimento de 'zonas mortas' aquáticas."
+      },
+      {
+        id: 2,
+        topic: "Interpretação Textual Avançada (Texto Denso - Inferência e Aquíferos)",
+        pinnedText: textBase123,
+        image: null,
+        statement: "De acordo com as explicações apresentadas no segundo parágrafo, por que a contaminação dos aquíferos subterrâneos representa uma ameaça ainda mais grave do que a poluição superficial dos rios?",
+        correctKey: "E",
+        options: {
+          A: "A água retida no subsolo evapora muito mais rápido do que a água de superfície durante períodos de seca.",
+          B: "Os lençóis aquíferos acumulam apenas detergentes sintéticos que evaporam naturalmente sob a pressão do solo.",
+          C: "A degradação dos rios de superfície afeta de modo exclusivo os sistemas de irrigação da agricultura.",
+          D: "As bactérias patogênicas não possuem capacidade de sobrevivência em camadas de solo poroso.",
+          E: "A descontaminação de aquíferos é extremamente complexa e custosa, podendo comprometer permanentemente os reservatórios de água potável."
+        },
+        justification: "Resposta correta: E. O segundo parágrafo destaca que o processo de remediação de um aquífero é 'extraordinarily complex, prohibitively expensive, and often practically impossible', expondo a população a riscos crônicos à saúde por meio da água contaminada."
+      },
+      {
+        id: 3,
+        topic: "Interpretação Textual Avançada (Texto Denso - Síntese e Soluções)",
+        pinnedText: textBase123,
+        image: null,
+        statement: "Ao analisar a argumentação global do texto no terceiro parágrafo, qual das opções a seguir sintetiza de maneira correta a visão do autor sobre o combate à poluição por esgoto?",
+        correctKey: "B",
+        options: {
+          A: "O crescimento e a expansão urbana devem ser totalmente paralisados para que a bacia hidrográfica se recupere por conta própria.",
+          B: "Superar a contaminação hídrica requer tanto investimentos estruturais de engenharia quanto rigor legislativo e campanhas educativas.",
+          C: "As campanhas educativas de saúde pública são autossuficientes para restaurar os reservatórios subterrâneos degradados.",
+          D: "O lançamento de esgoto não tratado afeta unicamente os ecossistemas marinhos, sem causar impactos reais à saúde humana.",
+          E: "A implantação de estações modernas de tratamento de águas residuais se mostrou ineficiente e economicamente inviável."
+        },
+        justification: "Resposta correta: B. O terceiro parágrafo conclui que contornar essa crise exige a combinação de intervenções de infraestrutura ('structural infrastructure interventions') com regulamentação legal e campanhas de conscientização pública."
+      },
+      {
+        id: 4,
+        topic: "Interpretação de Diálogo e Tom",
+        pinnedText: null,
+        image: null,
+        statement: "Leia o diálogo abaixo entre dois pesquisadores de um instituto ambiental:\n\n<b>Dr. Evans:</b> <i>\"If we don't install secondary filtration systems this month, the river's bio-indicator species will collapse entirely.\"</i>\n<b>Dr. Ramos:</b> <i>\"I understand the urgency, but our budget was slashed by half. We'll have to improvise with baseline monitoring for now.\"</i>\n\nO que se pode inferir sobre a postura e a resposta do Dr. Ramos?",
+        correctKey: "A",
+        options: {
+          A: "Ele compreende a gravidade e o perigo iminente, porém se encontra limitado por cortes orçamentários.",
+          B: "Ele rejeita totalmente o diagnóstico científico apresentado pelo Dr. Evans a respeito do ecossistema do rio.",
+          C: "Ele se compromete a duplicar os investimentos nos sistemas de filtragem de maneira imediata.",
+          D: "Ele sustenta a tese de que as espécies bioindicadoras não correm nenhum tipo de risco de extinção.",
+          E: "Ele propõe ignorar a situação do rio e encerrar o monitoramento até o ano seguinte."
+        },
+        justification: "Resposta correta: A. O Dr. Ramos reconhece explicitamente a urgência da situação ('I understand the urgency'), contudo expõe a restrição financeira intransponível no momento ('our budget was slashed by half')."
+      },
+      {
+        id: 5,
+        topic: "Análise de Excerto Musical (Figuras de Linguagem e Mensagem)",
+        pinnedText: null,
+        image: null,
+        statement: "Examine os versos da clássica canção <i>\"Mercy Mercy Me (The Ecology)\"</i>, lançada por Marvin Gaye:\n\n<i>\"Where did all the blue skies go?\nPoison is the wind that blows from the north and south and east...\"</i>\n\nQual é a mensagem central e o tom predominante nesses versos poéticos?",
+        correctKey: "D",
+        options: {
+          A: "Entusiasmo diante do avanço industrial e das modificações na paisagem urbana.",
+          B: "Celebração das oscilações sazonais de temperatura nas diferentes regiões do planeta.",
+          C: "Crítica bem-humorada às previsões meteorológicas veiculadas nos jornais locais.",
+          D: "Sensação de lamento e alarme em relação à poluição atmosférica e degradação ambiental global.",
+          E: "Total indiferença do eu lírico quanto à preservação das reservas e da fauna silvestre."
+        },
+        justification: "Resposta correta: D. As imagens poéticas do desaparecimento do céu azul ('Where did all the blue skies go?') e do vento envenenado ('Poison is the wind') transmitem profunda tristeza, luto e indignação em relação aos danos ambientais."
+      },
+      {
+        id: 6,
+        topic: "Análise Poética e Significado Implícito",
+        pinnedText: null,
+        image: null,
+        statement: "Considere a leitura dos seguintes versos de um poema contemporâneo sobre a natureza:\n\n<i>\"The river used to sing in clear crystal notes,\nNow it whispers heavy secrets in muddy coats.\"</i>\n\nQual contraste principal o autor constrói por meio dessas imagens?",
+        correctKey: "C",
+        options: {
+          A: "A diferença técnica entre o fluxo de correntes oceânicas profundas e de pequenos riachos de montanha.",
+          B: "O montante financeiro exigido para edificar pontes de grande porte sobre canais fluviais.",
+          C: "A degradação de um rio que antes era límpido e saudável em um curso d'água turvo e poluído.",
+          D: "A alternância de ritmos sonoros provocada pelas tempestades ao longo das diferentes estações.",
+          E: "A velocidade da água ao despencar de grandes cachoeiras em comparação com vales planos."
+        },
+        justification: "Resposta correta: C. O poeta contrapõe a memória de um rio limpo que cantava em notas cristalinas ('clear crystal notes') com a realidade atual de águas lamacentas e poluídas ('muddy coats')."
+      },
+      {
+        id: 7,
+        topic: "Interpretação de Diálogo (Inferência Social/Comportamental)",
+        pinnedText: null,
+        image: null,
+        statement: "Analise o debate entre dois estudantes sobre hábitos sustentáveis:\n\n<b>Lucas:</b> <i>\"Why bother sorting our trash into recycling bins? Most of it ends up in the same landfill anyway.\"</i>\n<b>Sophia:</b> <i>\"Even if the system isn't perfect, giving up completely guarantees that nothing will ever improve.\"</i>\n\nA contra-argumentação apresentada por Sophia fundamenta-se na premissa de que:",
+        correctKey: "E",
+        options: {
+          A: "A infraestrutura de reciclagem opera de maneira impecável e sem falhas em todo o mundo.",
+          B: "Os aterros sanitários representam a solução ecológica ideal para estocar resíduos plásticos.",
+          C: "As iniciativas individuais possuem impacto nulo sobre as práticas da coletividade.",
+          D: "Lucas está correto em abandonar qualquer responsabilidade ou atenção às políticas ambientais.",
+          E: "A inércia e o cinismo travam o progresso, tornando o engajamento necessário mesmo diante de imperfeições no sistema."
+        },
+        justification: "Resposta correta: E. Sophia refuta o desânimo de Lucas destacando que a desistência total ('giving up completely') anula as chances de avanço, defendendo o Esforço consciente em detrimento do conformismo."
+      },
+      {
+        id: 8,
+        topic: "Análise de Trecho Literário / Narrativo",
+        pinnedText: null,
+        image: null,
+        statement: "Observe o excerto narrativo a seguir:\n\n<i>\"The old fisherman stood by the shore, staring at the oily film coating the waves. He put away his nets; for the third time this week, there would be no catch to bring home to the market.\"</i>\n\nQue relação implícita o trecho estabelece entre a contaminação do ambiente e a vida da comunidade local?",
+        correctKey: "B",
+        options: {
+          A: "Os pescadores da região preferem permanecer na praia a navegar rumo ao mar aberto.",
+          B: "A degradação ambiental impacta diretamente o sustento econômico e a subsistência dos trabalhadores.",
+          C: "O contato com resíduos de óleo torna as redes de pesca mais duráveis para o trabalho diário.",
+          D: "O surgimento de manchas de óleo na água favorece a reprodução e abundância de peixes.",
+          E: "O valor comercial dos pescados atinge recordes positivos de venda durante acidentes ambientais."
+        },
+        justification: "Resposta correta: B. Ao associar a camada de óleo na água ao recolhimento das redes vazias pela terceira vez na semana, o texto demonstra o prejuízo econômico e social direto causado pela poluição."
+      },
+      {
+        id: 9,
+        topic: "Análise de Excerto Musical (Mensagem Crítica)",
+        pinnedText: null,
+        image: null,
+        statement: "Avalie o trecho da famosa canção <i>\"Big Yellow Taxi\"</i>, da compositora Joni Mitchell:\n\n<i>\"They paved paradise and put up a parking lot...\nDon't it always seem to go that you don't know what you've got 'til it's gone?\"</i>\n\nQual crítica social e reflexão sobre a preservação natural é enfatizada nesses versos?",
+        correctKey: "A",
+        options: {
+          A: "As pessoas costumam negligenciar a importância dos bens naturais até que eles sejam destruídos de forma irreversível.",
+          B: "A construção de estacionamentos asfaltados agrega grande valor biológico aos centros urbanos.",
+          C: "A pavimentação de grandes rodovias é o método mais eficiente para proteger a fauna nativa.",
+          D: "Os táxis urbanos são os principais vilões da emissão de poluentes nas grandes metrópoles.",
+          E: "A vegetação nativa pode ser facilmente reconstituída assim que as obras urbanas forem desfeitas."
+        },
+        justification: "Resposta correta: A. O aforismo 'you don't know what you've got 'til it's gone' (você não sabe o que tem até perder) denuncia o valor tardio atribuído ao patrimônio natural após o avanço destrutivo da urbanização."
+      },
+      {
+        id: 10,
+        topic: "Análise de Cartum / Linguagem Mista (Intenção do Autor)",
+        pinnedText: null,
+        image: "cartoon.png",
+        statement: "Examine a ilustração do cartum em que o homem está concentrado na tela do computador dizendo: <i>\"Look, Polly... It says that people who spend too much time online neglect their other relationships...\"</i> enquanto seu pássaro de estimação se encontra morto dentro da gaiola.\n\nQual é a intenção central do autor ao construir essa cena satírica?",
+        correctKey: "D",
+        options: {
+          A: "Instruir os leitores sobre os cuidados nutricionais específicos exigidos para a criação de aves em cativeiro.",
+          B: "Demonstrar como as tecnologias de informação permitem monitorar e cuidar de animais domésticos à distância.",
+          C: "Criticar a fragilidade biológica dos pássaros mantidos em ambientes residenciais fechados.",
+          D: "Ironizar a contradição e hipocrisia de consumir teorias sobre negligência digital enquanto se ignora a morte real ao lado provocada pelo próprio vício em telas.",
+          E: "Incentivar os usuários a dedicarem mais horas diárias à leitura de artigos acadêmicos sobre saúde mental na internet."
+        },
+        justification: "Resposta correta: D. A sátira decorre da contradição cômica e trágica do personagem: ele lê em voz alta um alerta teórico sobre como a internet afasta as pessoas dos relacionamentos reais, totalmente alheio ao fato de que seu animal de estimação morreu por falta de atenção."
+      }
+    ];
+
+    // ESTADO DA APLICAÇÃO E EMBARALHAMENTO DO GABARITO (Algoritmo Fisher-Yates)
+    let processedQuestions = [];
+    let userAnswers = {};
+    let checkedQuestions = {};
+    let currentQuestionIndex = 0;
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function initQuizData() {
+      processedQuestions = rawQuestions.map((q) => {
+        const originalKeys = ['A', 'B', 'C', 'D', 'E'];
+        const optionsList = originalKeys.map(key => ({
+          originalKey: key,
+          text: q.options[key]
+        }));
+
+        // Embaralhamento das alternativas
+        const shuffledOptions = shuffleArray(optionsList);
+
+        const newLetterLabels = ['A', 'B', 'C', 'D', 'E'];
+        let mappedCorrectLetter = '';
+
+        const finalOptions = shuffledOptions.map((opt, index) => {
+          const currentLabel = newLetterLabels[index];
+          if (opt.originalKey === q.correctKey) {
+            mappedCorrectLetter = currentLabel;
+          }
+          return {
+            label: currentLabel,
+            text: opt.text,
+            originalKey: opt.originalKey
+          };
+        });
+
+        return {
+          ...q,
+          displayOptions: finalOptions,
+          correctDisplayLetter: mappedCorrectLetter
+        };
+      });
+    }
+
+    function buildNavGrid() {
+      const navGrid = document.getElementById('nav-grid');
+      navGrid.innerHTML = '';
+      for (let i = 0; i < processedQuestions.length; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.id = `nav-btn-${i}`;
+        btn.innerText = i + 1;
+        btn.onclick = () => jumpToQuestion(i);
+        navGrid.appendChild(btn);
+      }
+      updateNavStatus();
+    }
+
+    function updateNavStatus() {
+      for (let i = 0; i < processedQuestions.length; i++) {
+        const btn = document.getElementById(`nav-btn-${i}`);
+        if (!btn) continue;
+        btn.classList.remove('active', 'correct', 'incorrect');
+
+        if (i === currentQuestionIndex) {
+          btn.classList.add('active');
+        }
+
+        if (checkedQuestions[i]) {
+          const isCorrect = userAnswers[i] === processedQuestions[i].correctDisplayLetter;
+          if (isCorrect) {
+            btn.classList.add('correct');
+          } else {
+            btn.classList.add('incorrect');
+          }
+        }
+      }
+    }
+
+    function renderQuestion(index) {
+      const q = processedQuestions[index];
+
+      document.getElementById('question-title').innerText = `Questão ${index + 1} de 10`;
+
+      // Pinned Text Box para Q1, Q2 e Q3
+      const pinnedBox = document.getElementById('pinned-text-box');
+      const pinnedContent = document.getElementById('pinned-text-content');
+      if (q.pinnedText) {
+        pinnedContent.innerText = q.pinnedText;
+        pinnedBox.style.display = 'block';
+      } else {
+        pinnedBox.style.display = 'none';
+      }
+
+      // Media Box para a imagem do Cartum (Q10)
+      const mediaBox = document.getElementById('media-box');
+      const mediaImage = document.getElementById('media-image');
+      if (q.image) {
+        mediaImage.src = q.image;
+        mediaBox.style.display = 'block';
+      } else {
+        mediaBox.style.display = 'none';
+      }
+
+      document.getElementById('statement-text').innerHTML = q.statement.replace(/\n/g, '<br>');
+
+      const optionsContainer = document.getElementById('options-list');
+      optionsContainer.innerHTML = '';
+
+      const isChecked = checkedQuestions[index];
+
+      q.displayOptions.forEach((opt) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'option-item';
+
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = `option-${index}`;
+        radio.value = opt.label;
+        radio.id = `opt-${opt.label}`;
+        radio.disabled = !!isChecked;
+
+        if (userAnswers[index] === opt.label) {
+          radio.checked = true;
+          itemDiv.classList.add('selected');
+        }
+
+        if (isChecked) {
+          if (opt.label === q.correctDisplayLetter) {
+            itemDiv.classList.add('correct-bg');
+          } else if (userAnswers[index] === opt.label) {
+            itemDiv.classList.add('incorrect-bg');
+          }
+        } else {
+          itemDiv.onclick = () => selectOption(index, opt.label);
+        }
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'option-text';
+        labelSpan.innerHTML = `<strong>${opt.label})</strong> ${opt.text}`;
+
+        itemDiv.appendChild(radio);
+        itemDiv.appendChild(labelSpan);
+        optionsContainer.appendChild(itemDiv);
+      });
+
+      const feedbackBox = document.getElementById('feedback-box');
+      const feedbackText = document.getElementById('feedback-text');
+      if (isChecked) {
+        let textJust = q.justification;
+        textJust = textJust.replace(/Resposta correta: [A-E]\./, `Resposta correta: ${q.correctDisplayLetter}.`);
+        feedbackText.innerText = textJust;
+        feedbackBox.classList.add('show');
+      } else {
+        feedbackBox.classList.remove('show');
+      }
+
+      const btnCheck = document.getElementById('btn-check');
+      btnCheck.disabled = !userAnswers[index] || isChecked;
+
+      const btnNext = document.getElementById('btn-next');
+      if (index === processedQuestions.length - 1) {
+        btnNext.innerText = 'Finish';
+        btnNext.classList.add('btn-finish');
+      } else {
+        btnNext.innerText = 'Next';
+        btnNext.classList.remove('btn-finish');
+      }
+
+      const btnPrev = document.getElementById('btn-prev');
+      btnPrev.disabled = index === 0;
+
+      updateNavStatus();
+    }
+
+    function selectOption(qIndex, label) {
+      if (checkedQuestions[qIndex]) return;
+      userAnswers[qIndex] = label;
+
+      const items = document.querySelectorAll('.option-item');
+      items.forEach(item => item.classList.remove('selected'));
+
+      const radio = document.getElementById(`opt-${label}`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.option-item').classList.add('selected');
+      }
+
+      document.getElementById('btn-check').disabled = false;
+    }
+
+    function checkAnswer() {
+      if (!userAnswers[currentQuestionIndex]) return;
+      checkedQuestions[currentQuestionIndex] = true;
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function jumpToQuestion(index) {
+      currentQuestionIndex = index;
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < processedQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion(currentQuestionIndex);
+      }
+    }
+
+    function finishQuiz() {
+      let totalCorrect = 0;
+      let topicErrors = {};
+      let topicTotals = {};
+
+      processedQuestions.forEach((q, idx) => {
+        const topic = q.topic;
+        if (!topicTotals[topic]) {
+          topicTotals[topic] = 0;
+          topicErrors[topic] = 0;
+        }
+        topicTotals[topic]++;
+
+        const userAns = userAnswers[idx];
+        if (userAns === q.correctDisplayLetter) {
+          totalCorrect++;
+        } else {
+          topicErrors[topic]++;
+        }
+      });
+
+      const totalQuestions = processedQuestions.length;
+      const totalIncorrect = totalQuestions - totalCorrect;
+      
+      // Nota final (escala 0,0 a 10,0)
+      const score = (totalCorrect * 1.0).toFixed(1);
+
+      const correctPct = Math.round((totalCorrect / totalQuestions) * 100);
+      const incorrectPct = Math.round((totalIncorrect / totalQuestions) * 100);
+
+      document.getElementById('score-display').innerText = `Sua Nota: ${score.replace('.', ',')} / 10,0`;
+      document.getElementById('stat-correct').innerText = `${totalCorrect} (${correctPct}%)`;
+      document.getElementById('stat-incorrect').innerText = `${totalIncorrect} (${incorrectPct}%)`;
+
+      const diagnosticsList = document.getElementById('diagnostics-list');
+      diagnosticsList.innerHTML = '';
+
+      let needsRevision = false;
+
+      for (const topic in topicTotals) {
+        const errors = topicErrors[topic];
+        const total = topicTotals[topic];
+        const errorPct = (errors / total) * 100;
+
+        if (errorPct > 30) {
+          needsRevision = true;
+          const li = document.createElement('li');
+          let recommendationText = "";
+
+          if (topic.includes("Texto Denso")) {
+            recommendationText = "<strong>Interpretação de Texto Denso:</strong> Praticar a leitura analítica de textos informativos sobre impacto ambiental, identificando relações de causa/efeito e contaminação de aquíferos.";
+          } else if (topic.includes("Diálogo")) {
+            recommendationText = "<strong>Interpretação de Diálogos:</strong> Exercitar a identificação de intenções implícitas, tom de fala, restrições financeiras e valores comportamentais em conversações.";
+          } else if (topic.includes("Musical") || topic.includes("Poética")) {
+            recommendationText = "<strong>Linguagem Poética e Músicas:</strong> Analisar o uso de figuras de linguagem, metáforas e crítica socioambiental em canções e poemas em inglês.";
+          } else if (topic.includes("Cartum")) {
+            recommendationText = "<strong>Análise de Cartuns e Ironia:</strong> Reforçar a leitura integrada de elementos verbais e não-verbais para interpretar sátiras à dependência tecnológica.";
+          } else {
+            recommendationText = `<strong>${topic}:</strong> Recomenda-se revisar este conteúdo específico (Percentual de erro: ${Math.round(errorPct)}%).`;
+          }
+
+          li.innerHTML = recommendationText;
+          diagnosticsList.appendChild(li);
+        }
+      }
+
+      if (!needsRevision) {
+        const li = document.createElement('li');
+        li.innerHTML = "<strong>Parabéns!</strong> Você demonstrou excelente domínio em leitura e interpretação textual em inglês (taxa de erro inferior a 30%). Continue praticando!";
+        diagnosticsList.appendChild(li);
+      }
+
+      document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function restartQuiz() {
+      userAnswers = {};
+      checkedQuestions = {};
+      currentQuestionIndex = 0;
+      document.getElementById('modal-overlay').style.display = 'none';
+      initQuizData();
+      buildNavGrid();
+      renderQuestion(0);
+    }
+
+    window.onload = function() {
+      initQuizData();
+      buildNavGrid();
+      renderQuestion(0);
+    };
+  </script>
+</body>
+</html>
